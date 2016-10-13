@@ -1,57 +1,26 @@
 package jp.co.plusize.ogawa_yuutarou;
 
-import java.io.*;
+import java.io.File;
+import java.util.ArrayList;
 
 
 public class Calculate_sales {
 	public static void main(String[] args) {
 
-		//HashMap外に
+		 File uriageArgs = new File(args[0]);
+		 File uriageFile[] = uriageArgs.listFiles();
 
-		HashMap<String, String> map = new HashMap<String, String>();
-
-		//branch.lstが無ければエラーメッセージを出す
-
-		//fileを定義していない
-		if (!file.exists(args[0]."branch.lst")){
-			 System.out.println("支店定義ファイルが存在しません");
-		 }
-
-		 	//branch.lst内の文をカンマで区切って紐付けをする
-		 	//keyとvalueのフォーマットが違えばエラーメッセージ
-		 try {
-			File file = new File(args[0],"branch.lst");
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-
-			//一行ずつ読み込み、全ての支店コードとそれに対応する
-			//支店名を保持する。
-			String shi;
-			while((shi = br.readLine()) != null) {
-				String[] shiten = shi.split(",", 0);
-
-
-				//エラー処理
-				//shiten[0]が3桁の数字で無ければエラーメッセージ
-				//shiten[1]がカンマ、改行が無ければエラーメッセージ
-				//どちらも通ったらmapへという流れ
-
-
-				//半角数字3桁にマッチしてる
-				//http://java-reference.sakuraweb.com/java_string_regex.html
-				if (shiten[0].matches != "^\\d{3}$") {
-					System.out.println("支店定義ファイルのフォーマットが不正です");
-
-					//配列の要素数２以外であればエラーメッセージ
-				} else if (shiten[1].length != 2) {
-					System.out.println("支店定義ファイルのフォーマットが不正です");
-				  }
-					map.put(shiten[0], shiten[1]);
-			}
-			br.close();
-			fr.close();
-		  } catch(IOException e) {
-			  }  System.out.println(map.entrySet());
+	 	//for文でディレクトリ内を１つずつ見て
+	 	//if文で8桁数字.rcdのみを取り出す。
+		//ArrayListで取り出した拡張子抜きの文字列を格納
+		ArrayList string = new ArrayList();
+		for (int i = 0; i < uriageFile.length; i++) {
+			if (uriageFile[i].getName().matches("^[0-9]{8}.rcd$")) {
+				string.add(uriageFile[i].getName());;
+				String hoge = uriageFile[i].getName().substring(0,8);
+				System.out.println(hoge);
+            }
+		}
 
 
 	}
