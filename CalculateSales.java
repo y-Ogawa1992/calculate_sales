@@ -1,19 +1,25 @@
 package jp.co.plusize.ogawa_yuutarou;
 
-import java.io.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 
 public class CalculateSales {
 	public static void main(String[] args) {
+		//支店、売上合計の箱を作る。
+		//HashMapで作り、処理内容1,2と同じような感じ
+
 
 //branch.lstの処理
+
 		HashMap<String, String> branchMap = new HashMap<String, String>();
 		File branchFile = new File(args[0], "branch.lst");
+
 
 		//branch.lstが無ければエラーメッセージを出す
 		if(!branchFile.exists()){
@@ -48,6 +54,7 @@ public class CalculateSales {
 			fr.close();
 		 } catch(IOException e) {
 			}
+
 
 //commodity.lstの処理
 
@@ -95,24 +102,49 @@ public class CalculateSales {
 	 	//for文でディレクトリ内を１つずつ見て
 	 	//if文で8桁数字.rcdのみを取り出す。
 		//ArrayListで取り出した拡張子抜きの文字列を格納
-		ArrayList string = new ArrayList();
+		//104行目で昇順にソート
+		ArrayList<String> fileName = new ArrayList<String>();
 		for (int i = 0; i < uriageFile.length; i++) {
 			if (uriageFile[i].getName().matches("^[0-9]{8}.rcd$")) {
-				string.add(uriageFile[i].getName());;
+				fileName.add(uriageFile[i].getName());
+				Collections.sort(fileName);
             }
 		}
-
-		//ArrayListで格納したものをfor文で１つずつ確認
-		int count = 1;
-		for (//繰り返し回数を示す変数の宣言と初期化　処理を繰り返す条件式　カウンタ変数の値を更新する式) {
-
+		//拡張子手前で取出し
+		//for文でfileNameを全てチェックし、最小1最大3で当てはまらなければエラー
+		int max = Integer.parseInt(fileName.get(0).split("\\.")[0]);
+		int min = Integer.parseInt(fileName.get(1).split("\\.")[0]);
+		for(int i = 0; i < fileName.size(); i++) {
+			int temp = Integer.parseInt(fileName.get(i).split("\\.")[0]);
+			if(max < temp) max = temp;
+			if(min > temp) min = temp;
 		}
+			if(!(min == 1 && max == 3)) {
+				System.out.println("売上ファイル名が連番になっていません");
+			}
+//集計処理②
 
+			//.rcdファイルの中を1行ずつ取り出す。
+			HashMap<String, String> shitenMap = new HashMap<String, String>();
+			 File shitenFile = new File(args[0], ".rcd");
 
-			//上のifで合致したものを連番か確認する処理
-				String hoge = uriageFile[i].getName().substring(0,8);
+				//.rcd内の文を一行ずつ読み込み、保持する
+			 	//ここで指定するkeyと保持してあった(.lst２種)のkeyを照らし合わせ
+			 	//一時的に保存＝バッファ
+			 	//shitenMapはkeyにコード、valueには金額を設定。
+			 try {
+				FileReader fr = new FileReader(shitenFile);
+				BufferedReader br = new BufferedReader(fr);
 
-
-
+				String shi;
+				while((shi = br.readLine()) != null) {
+					String[] shitenData = shi.split(shi);
+						System.out.println(shitenData);
+			 }
+				br.close();
+				fr.close();
+		} catch(IOException e) {
+			System.out.println("x");
+		}
 	}
 }
