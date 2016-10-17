@@ -9,13 +9,13 @@ import java.util.Collections;
 import java.util.HashMap;
 
 
+
+
 public class CalculateSales {
 	public static void main(String[] args) {
-		//支店、売上合計の箱を作る。
-		//HashMapで作り、処理内容1,2と同じような感じ
 
 
-//branch.lstの処理
+//処理内容１ branch.lstの処理
 
 		HashMap<String, String> branchMap = new HashMap<String, String>();
 		File branchFile = new File(args[0], "branch.lst");
@@ -45,10 +45,15 @@ public class CalculateSales {
 				//http://java-reference.sakuraweb.com/java_string_regex.html
 				if (branchData.length == 2 && branchData[0].matches("^\\d{3}$")) {
 					branchMap.put(branchData[0], branchData[1]);
+
+					//支店コードと金額０円のマップを作る
+					HashMap<String, Object> shitenTotalMap = new HashMap<String, Object>();
+					shitenTotalMap.put(branchData[0], 0);
+
 				} else {
 					System.out.println("支店定義ファイルのフォーマットが不正です");
 					return;
-				  }	System.out.println(branchMap.entrySet());
+				  }
 			}
 			br.close();
 			fr.close();
@@ -56,7 +61,7 @@ public class CalculateSales {
 			}
 
 
-//commodity.lstの処理
+//処理内容２ commodity.lstの処理
 
 		 HashMap<String, String> commodityMap = new HashMap<String, String>();
 		 File commodityFile = new File(args[0], "commodity.lst");
@@ -77,31 +82,37 @@ public class CalculateSales {
 			//商品名を保持する。
 			String shi;
 			while((shi = br.readLine()) != null) {
-				String[] commodityData = shi.split(",", 0);
+			String[] commodityData = shi.split(",", 0);
 
 				//エラー処理
 				//8桁固定の英数字、要素数2つ
 				//どちらも通ったらmapへという流れ
 				if (commodityData.length == 2 && commodityData[0].matches("^[0-9a-zA-Z]{8}")) {
 					commodityMap.put(commodityData[0], commodityData[1]);
+
+					//支店コードと金額０円のマップを作る
+					HashMap<String, Object> shouhinTotalMap = new HashMap<String, Object>();
+					shouhinTotalMap.put(commodityData[0], 0);
+
 				} else {
 					System.out.println("商品定義ファイルのフォーマットが不正です");
 					return;
-				  }	System.out.println(commodityMap.entrySet());
+				  }
 			}
 			br.close();
 			fr.close();
 		 } catch(IOException e) {
 			}
 
-//集計処理①
+//処理内容３－１ 集計処理①
+
 
 		 File uriageArgs = new File(args[0]);
 		 File uriageFile[] = uriageArgs.listFiles();
 
 	 	//for文でディレクトリ内を１つずつ見て
 	 	//if文で8桁数字.rcdのみを取り出す。
-		//ArrayListで取り出した拡張子抜きの文字列を格納
+		//ArrayListで取り出した文字列を格納
 		//104行目で昇順にソート
 		ArrayList<String> fileName = new ArrayList<String>();
 		for (int i = 0; i < uriageFile.length; i++) {
@@ -119,32 +130,37 @@ public class CalculateSales {
 			if(max < temp) max = temp;
 			if(min > temp) min = temp;
 		}
-			if(!(min == 1 && max == 3)) {
-				System.out.println("売上ファイル名が連番になっていません");
-			}
-//集計処理②
+		if(!(min == 1 && max == 3)) {
+			System.out.println("売上ファイル名が連番になっていません");
+		}
 
-			//.rcdファイルの中を1行ずつ取り出す。
-			HashMap<String, String> shitenMap = new HashMap<String, String>();
-			 File shitenFile = new File(args[0], ".rcd");
+//処理内容３－２ 集計処理②
+		for(int i = 0; i < fileName.size(); i++) {
 
-				//.rcd内の文を一行ずつ読み込み、保持する
-			 	//ここで指定するkeyと保持してあった(.lst２種)のkeyを照らし合わせ
-			 	//一時的に保存＝バッファ
-			 	//shitenMapはkeyにコード、valueには金額を設定。
-			 try {
-				FileReader fr = new FileReader(shitenFile);
+			//■格納した「8桁.rcd」のファイルを１つずつ、１行ずつ読み取る■
+			try {
+				//ファイル型に変換
+				File file = new File(args[0], fileName.get(i));
+				FileReader fr = new FileReader(file);
 				BufferedReader br = new BufferedReader(fr);
 
-				String shi;
-				while((shi = br.readLine()) != null) {
-					String[] shitenData = shi.split(shi);
-						System.out.println(shitenData);
-			 }
+				String shi = null;
+				ArrayList<String> fileData = new ArrayList<String>();
+				while ((shi = br.readLine()) != null) {
+					fileData.add(shi);
+				}
+				System.out.println(fileData.get(0));
 				br.close();
 				fr.close();
-		} catch(IOException e) {
-			System.out.println("x");
+				//計算処理
+
+
+
+
+
+			} catch(IOException e) {
+
+			}
 		}
 	}
 }
