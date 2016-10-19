@@ -36,18 +36,15 @@ public class CalculateSales {
 		if(!branchFile.exists()){
 			System.out.println("支店定義ファイルが存在しません");
 			return;
-		 }
+		}
 
-		 FileReader fr = null;
-		 BufferedReader br =null;
+		 BufferedReader br = null;
 		 //branch.lst内の文をカンマで区切って紐付けをする
 		 //keyとvalueのフォーマットが違えばエラーメッセージ
 		 try {
 			 //一行ずつ読み込み、全ての支店コードとそれに対応する
 			 //支店名を保持する。
-
-			 fr = new FileReader(branchFile);
-			 br = new BufferedReader(fr);
+			 br = new BufferedReader(new FileReader(branchFile));
 
 			 String str;
 			 while((str = br.readLine()) != null) {
@@ -57,23 +54,21 @@ public class CalculateSales {
 				 //半角数字3桁にマッチ＆配列の要素数２個以外であればエラーメッセージ
 				 //どちらも通ったらmapへという流れ
 				 //http://java-reference.sakuraweb.com/java_string_regex.html
-				 if (branchData.length == 2 && branchData[0].matches("^\\d{3}$")) {
-					 branchMap.put(branchData[0], branchData[1]);
-
-					 //支店コードと金額０円のマップを作る
-					 branchTotalMap.put(branchData[0], (long) 0);
-
-				 } else {
+				 if (branchData.length != 2 || !branchData[0].matches("^\\d{3}$")) {
 					 System.out.println("支店定義ファイルのフォーマットが不正です");
 					 return;
 				 }
+				 branchMap.put(branchData[0], branchData[1]);
+
+				 //支店コードと金額０円のマップを作る
+				 branchTotalMap.put(branchData[0], 0L);
 			}
 		 } catch(IOException e) {
 			 System.out.println("予期せぬエラーが発生しました");
 			 return;
 		 } finally {
 			 try {
-				 if(fr != null) { fr.close(); }
+				 if(br != null) { br.close(); }
 			 } catch (IOException e) {
 				 System.out.println("予期せぬエラーが発生しました");
 				 return;
@@ -97,8 +92,7 @@ public class CalculateSales {
 		 //keyとvalueのフォーマットが違えばエラーメッセージ
 		 try {
 
-			 fr = new FileReader(commodityFile);
-			 br = new BufferedReader(fr);
+			 br = new BufferedReader(new FileReader(commodityFile));
 
 			 //一行ずつ読み込み、全ての商品コードとそれに対応する
 			 //商品名を保持する。
@@ -125,7 +119,7 @@ public class CalculateSales {
 			 return;
 		 } finally {
 			 try {
-				 if(fr != null) { fr.close(); }
+				 if(br != null) { br.close(); }
 			 } catch (IOException e) {
 				 System.out.println("予期せぬエラーが発生しました");
 				 return;
@@ -173,8 +167,7 @@ public class CalculateSales {
 			try {
 				//ファイル型に変換
 				File file = new File(args[0], fileName.get(i));
-				fr = new FileReader(file);
-				br = new BufferedReader(fr);
+				br = new BufferedReader(new FileReader(fileName.get(i)));
 
 				String str = null;
 				ArrayList<String> fileData = new ArrayList<String>();
@@ -192,7 +185,7 @@ public class CalculateSales {
 					long branchTotalValue = branchTotalMap.get(fileData.get(0)) + Long.parseLong(fileData.get(2));
 					branchTotalMap.put(fileData.get(0), branchTotalValue);
 				} else {
-					System.out.println(fileName.get(i) + "の支店コードが不正です>");
+					System.out.println(fileName.get(i) + "の支店コードが不正です");
 					return;
 				}
 
@@ -215,7 +208,7 @@ public class CalculateSales {
 				return;
 			} finally {
 				try {
-					if(fr != null) { fr.close(); }
+					if(br != null) { br.close(); }
 				} catch (IOException e) {
 					System.out.println("予期せぬエラーが発生しました");
 					return;
@@ -236,24 +229,22 @@ public class CalculateSales {
 			}
 		});
 
-		FileWriter fw = null;
 		BufferedWriter bw = null;
 
 		//branch.outを作成
 		try {
 			File file = new File(args[0], "branch.out");
-			fw = new FileWriter(file);
-			bw = new BufferedWriter(fw);
+			bw = new BufferedWriter(new FileWriter(file));
 
 			for(Entry<String,Long> s : branchSort) {
-				fw.write(s.getKey() + "," + branchMap.get(s.getKey()) + "," + s.getValue() + "\n");
+				bw.write(s.getKey() + "," + branchMap.get(s.getKey()) + "," + s.getValue() + "\n");
 			}
 		} catch(IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
 			return;
 		} finally {
 			try {
-				if(fw != null) { fw.close(); }
+				if(bw != null) { bw.close(); }
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
 				return;
@@ -277,18 +268,17 @@ public class CalculateSales {
 		File file = new File(args[0], "commodity.out");
 
 		try {
-			fw = new FileWriter(file);
-			bw = new BufferedWriter(fw);
+			bw = new BufferedWriter(new FileWriter(file));
 
 			for(Entry<String,Long> s : commoditySort) {
-				fw.write(s.getKey() + "," + commodityMap.get(s.getKey()) + "," + s.getValue() + "\n");
+			bw.write(s.getKey() + "," + commodityMap.get(s.getKey()) + "," + s.getValue() + "\n");
 			}
 		} catch(IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
 			return;
 		} finally {
 			try {
-				if(fw != null) { fw.close(); }
+				if(bw != null) { bw.close(); }
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
 				return;
