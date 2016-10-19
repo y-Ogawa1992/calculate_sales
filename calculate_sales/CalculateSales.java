@@ -20,6 +20,10 @@ import java.util.Map.Entry;
 public class CalculateSales {
 	public static void main(String[] args) {
 
+		if(args.length != 1) {
+			System.out.println("予期せぬエラーが発生しました");
+			return;
+		}
 
 		//処理内容１ branch.lstの処理
 
@@ -66,11 +70,13 @@ public class CalculateSales {
 			}
 		 } catch(IOException e) {
 			 System.out.println("予期せぬエラーが発生しました");
+			 return;
 		 } finally {
 			 try {
 				 if(fr != null) { fr.close(); }
 			 } catch (IOException e) {
 				 System.out.println("予期せぬエラーが発生しました");
+				 return;
 			 }
 		 }
 
@@ -116,11 +122,13 @@ public class CalculateSales {
 			 }
 		 } catch(IOException e) {
 			 System.out.println("予期せぬエラーが発生しました");
+			 return;
 		 } finally {
 			 try {
 				 if(fr != null) { fr.close(); }
 			 } catch (IOException e) {
 				 System.out.println("予期せぬエラーが発生しました");
+				 return;
 			 }
 		 }
 
@@ -175,7 +183,7 @@ public class CalculateSales {
 				}
 				//3行以外ならエラーメッセージ
 				if(!(fileData.size() == 3)) {
-					System.out.println("<" + fileName.get(i) + ">" + "のフォーマットが不正です");
+					System.out.println(fileName.get(i) + "のフォーマットが不正です");
 					return;
 				}
 
@@ -184,7 +192,7 @@ public class CalculateSales {
 					long branchTotalValue = branchTotalMap.get(fileData.get(0)) + Long.parseLong(fileData.get(2));
 					branchTotalMap.put(fileData.get(0), branchTotalValue);
 				} else {
-					System.out.println("<" + fileName.get(i) + ">" + "の支店コードが不正です>");
+					System.out.println(fileName.get(i) + "の支店コードが不正です>");
 					return;
 				}
 
@@ -193,7 +201,7 @@ public class CalculateSales {
 					long commodityTotalValue = commodityTotalMap.get(fileData.get(1)) + Long.parseLong(fileData.get(2));
 					commodityTotalMap.put(fileData.get(1), commodityTotalValue);
 				} else {
-					System.out.println("<" + fileName.get(i) + ">" + "の商品コードが不正です");
+					System.out.println(fileName.get(i) + "の商品コードが不正です");
 					return;
 				}
 
@@ -204,11 +212,13 @@ public class CalculateSales {
 				}
 			} catch(IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
+				return;
 			} finally {
 				try {
 					if(fr != null) { fr.close(); }
 				} catch (IOException e) {
 					System.out.println("予期せぬエラーが発生しました");
+					return;
 				}
 			}
 		}
@@ -240,11 +250,13 @@ public class CalculateSales {
 			}
 		} catch(IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
+			return;
 		} finally {
 			try {
 				if(fw != null) { fw.close(); }
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
+				return;
 			}
 		}
 
@@ -273,11 +285,13 @@ public class CalculateSales {
 			}
 		} catch(IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
+			return;
 		} finally {
 			try {
 				if(fw != null) { fw.close(); }
 			} catch (IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
+				return;
 			}
 		}
 	}
