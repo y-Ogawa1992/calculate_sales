@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-
-
 public class CalculateSales {
 	public static void main(String[] args) throws IOException {
 
@@ -26,48 +23,38 @@ public class CalculateSales {
 		}
 
 		//処理内容１ branch.lstの処理
-
 		HashMap<String, String> branchMap = new HashMap<String, String>();
 		HashMap<String, Long> branchTotalMap = new HashMap<String, Long>();
 		BufferedReader br = null;
-
-
 
 		//メソッド分け
 		if (!fileRead("branch.lst", "^\\d{3}$", "支店", branchMap, branchTotalMap, args[0])) {
 			return;
 		}
-		fileRead("branch.lst", "^\\d{3}$", "支店", branchMap, branchTotalMap, args[0]);
 
-		 //処理内容２ commodity.lstの処理
+		//処理内容２ commodity.lstの処理
+		HashMap<String, String> commodityMap = new HashMap<String, String>();
+		HashMap<String, Long> commodityTotalMap = new HashMap<String, Long>();
 
-		 HashMap<String, String> commodityMap = new HashMap<String, String>();
-		 HashMap<String, Long> commodityTotalMap = new HashMap<String, Long>();
+		//メソッド分け
+		if (!fileRead("commodity.lst", "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap, args[0])) {
+			return;
+		}
 
-		 //メソッド分け
-		 if (!fileRead("commodity.lst", "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap, args[0])) {
-			 return;
-		 }
-		 fileRead("commodity.lst", "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap, args[0]);
+		//処理内容３－１ 集計処理①
+		File salesDir = new File(args[0]);
+		File salesFile[] = salesDir.listFiles();
+		ArrayList<String> fileName = new ArrayList<String>();
 
-
-
-		 //処理内容３－１ 集計処理①
-
-
-		 File salesDir = new File(args[0]);
-		 File salesFile[] = salesDir.listFiles();
-		 ArrayList<String> fileName = new ArrayList<String>();
-
-		 //for文でディレクトリ内を１つずつ見て
-		 //if文で8桁数字.rcdのみを取り出す。
-		 //ArrayListで取り出した文字列を格納
-		 //104行目で昇順にソート
-		 for (int i = 0; i < salesFile.length; i++) {
-			 if (salesFile[i].getName().matches("^[0-9]{8}.rcd$") && salesFile[i].isFile()) {
-				 fileName.add(salesFile[i].getName());
-			 }
-		 }
+		//for文でディレクトリ内を１つずつ見て
+		//if文で8桁数字.rcdのみを取り出す。
+		//ArrayListで取り出した文字列を格納
+		//104行目で昇順にソート
+		for (int i = 0; i < salesFile.length; i++) {
+			if (salesFile[i].isFile() && salesFile[i].getName().matches("^[0-9]{8}.rcd$")) {
+				fileName.add(salesFile[i].getName());
+			}
+		}
 		Collections.sort(fileName);
 		//拡張子手前で取出し
 		//for文でfileNameを全てチェックし、最小1最大3で当てはまらなければエラー
@@ -83,14 +70,11 @@ public class CalculateSales {
 			return;
 		}
 
-
 		//処理内容３－２ 集計処理②-支店合計
 
 		for(int i = 0; i < fileName.size(); i++) {
-
 			//■格納した「8桁.rcd」のファイルを１つずつ、１行ずつ読み取る■
 			try {
-
 				//ファイル型に変換
 				File file = new File(args[0], fileName.get(i));
 				br = new BufferedReader(new FileReader(file));
@@ -105,7 +89,6 @@ public class CalculateSales {
 					System.out.println(fileName.get(i) + "のフォーマットが不正です");
 					return;
 				}
-
 
 				//計算処理 支店
 				if(branchTotalMap.containsKey(fileData.get(0))) {	//支店コードの存在確認
@@ -126,7 +109,7 @@ public class CalculateSales {
 				}
 
 				//合計金額10桁超えたらエラーの処理
-				if(branchTotalMap.get(fileData.get(0)) > 999999999 || commodityTotalMap.get(fileData.get(1)) > 999999999) {
+				if(branchTotalMap.get(fileData.get(0)) > 9999999999L || commodityTotalMap.get(fileData.get(1)) > 9999999999L) {
 					System.out.println("合計金額が10桁を超えました");
 					return;
 				}
@@ -150,7 +133,6 @@ public class CalculateSales {
 			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}
-		fileWrite(branchTotalMap, branchMap, "branch.out", args[0]);
 
 		//商品別売上ファイル
 
@@ -159,8 +141,6 @@ public class CalculateSales {
 			System.out.println("予期せぬエラーが発生しました");	//エラー出てるよ
 			return;
 		}
-		fileWrite(commodityTotalMap, commodityMap, "commodity.out", args[0]);
-
 	}
 
 	static boolean fileWrite(HashMap<String, Long> totalMap, HashMap<String, String> codeNameMap,
