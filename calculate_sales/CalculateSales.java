@@ -157,9 +157,9 @@ public class CalculateSales {
 
 		File file = new File(args, fileName);
 		BufferedWriter bw = null;
-		bw = new BufferedWriter(new FileWriter(file));
 
 		try {
+			bw = new BufferedWriter(new FileWriter(file));
 			for(Entry<String,Long> s : nameSort) {
 				bw.write(s.getKey() + "," + codeNameMap.get(s.getKey()) + "," + s.getValue() + "\n");
 			}
