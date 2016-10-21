@@ -118,14 +118,9 @@ public class CalculateSales {
 				System.out.println("予期せぬエラーが発生しました");
 				return;
 			} finally {
-				try {
 					if(br != null) br.close();
-				} catch (IOException e) {
-					System.out.println("予期せぬエラーが発生しました");
-					return;
 				}
 			}
-		}
 
 		//支店別集計ファイル
 		//メソッド分け
