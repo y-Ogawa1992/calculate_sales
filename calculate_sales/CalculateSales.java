@@ -98,9 +98,9 @@ public class CalculateSales {
 				if(branchTotalValue > 9999999999L){
 					System.out.println("合計金額が10桁を超えました");
 					return;
-				} else {
-					branchTotalMap.put(fileData.get(0), branchTotalValue);
 				}
+				branchTotalMap.put(fileData.get(0), branchTotalValue);
+
 
 				//計算処理 商品
 				if(!commodityTotalMap.containsKey(fileData.get(1))) {	//商品コードの存在確認
@@ -111,9 +111,8 @@ public class CalculateSales {
 				if(commodityTotalValue > 9999999999L) {
 					System.out.println("合計金額が10桁を超えました");
 					return;
-				} else {
-					commodityTotalMap.put(fileData.get(1), commodityTotalValue);
 				}
+				commodityTotalMap.put(fileData.get(1), commodityTotalValue);
 			} catch(IOException e) {
 				System.out.println("予期せぬエラーが発生しました");
 				return;
@@ -152,8 +151,8 @@ public class CalculateSales {
 
 		BufferedWriter bw = null;
 		try {
-			File file = new File(dir, fileName);
-			bw = new BufferedWriter(new FileWriter(file));
+			File files = new File(dir, fileName);
+			bw = new BufferedWriter(new FileWriter(files));
 			for(Entry<String,Long> s : nameSort) {
 				bw.write(s.getKey() + "," + codeNameMap.get(s.getKey()) + "," + s.getValue() + "\n");
 			}
@@ -167,16 +166,16 @@ public class CalculateSales {
 
 	static boolean fileRead(String fileName, String format, String definition,
 			HashMap<String, String> codeNameMap, HashMap<String, Long> totalMap, String dir) throws IOException {
-		File twoFile = new File(dir, fileName);
+		File files = new File(dir, fileName);
 
-		if(!twoFile.exists()){
+		if(!files.exists()){
 			System.out.println(definition + "定義ファイルが存在しません");
 			return false;
 		}
 
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(twoFile));
+			br = new BufferedReader(new FileReader(files));
 
 			String str;
 			while((str = br.readLine()) != null) {
