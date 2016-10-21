@@ -73,7 +73,6 @@ public class CalculateSales {
 		//処理内容３－２ 集計処理②-支店合計
 
 		for(int i = 0; i < fileName.size(); i++) {
-			//■格納した「8桁.rcd」のファイルを１つずつ、１行ずつ読み取る■
 			try {
 				//ファイル型に変換
 				File file = new File(args[0], fileName.get(i));
@@ -167,7 +166,12 @@ public class CalculateSales {
 		} catch(IOException e) {
 			return false;
 		} finally {
-			bw.close();
+			try {
+				if(bw != null) { bw.close(); }
+			} catch (IOException e) {
+				System.out.println("予期せぬエラーが発生しました");
+				return false;
+			}
 		}
 		return true;
 	}
@@ -201,7 +205,12 @@ public class CalculateSales {
 			System.out.println("予期せぬエラーが発生しました");
 			return false;
 		} finally {
-			br.close();
+			try {
+				if(br != null) { br.close(); }
+			} catch (IOException e) {
+				System.out.println("予期せぬエラーが発生しました");
+				return false;
+			}
 		}
 		return true;
 	}
