@@ -179,15 +179,15 @@ public class CalculateSales {
 
 			String str;
 			while((str = br.readLine()) != null) {
-				String[] twoData = str.split(",", 0);
+				String[] data = str.split(",", 0);
 
-				if (twoData.length != 2 || !twoData[0].matches(format)) {
+				if (data.length != 2 || !data[0].matches(format)) {
 					System.out.println(definition + "定義ファイルのフォーマットが不正です");
 					return false;
 				}
-				codeNameMap.put(twoData[0], twoData[1]);
+				codeNameMap.put(data[0], data[1]);
 				//支店コードと金額０円のマップを作る
-				totalMap.put(twoData[0], 0L);
+				totalMap.put(data[0], 0L);
 			}
 		} catch(IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
