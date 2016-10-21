@@ -31,25 +31,24 @@ public class CalculateSales {
 		HashMap<String, Long> branchTotalMap = new HashMap<String, Long>();
 		BufferedReader br = null;
 
-		File branchFile = new File(args[0], "branch.lst");
+
 
 		//メソッド分け
-		if (!fileRead(branchFile, "^\\d{3}$", "支店", branchMap, branchTotalMap)) {
+		if (!fileRead("branch.lst", "^\\d{3}$", "支店", branchMap, branchTotalMap, args[0])) {
 			return;
 		}
-		fileRead(branchFile, "^\\d{3}$", "支店", branchMap, branchTotalMap);
+		fileRead("branch.lst", "^\\d{3}$", "支店", branchMap, branchTotalMap, args[0]);
 
 		 //処理内容２ commodity.lstの処理
 
 		 HashMap<String, String> commodityMap = new HashMap<String, String>();
 		 HashMap<String, Long> commodityTotalMap = new HashMap<String, Long>();
-		 File commodityFile = new File(args[0], "commodity.lst");
 
 		 //メソッド分け
-		 if (!fileRead(commodityFile, "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap)) {
+		 if (!fileRead("commodity.lst", "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap, args[0])) {
 			 return;
 		 }
-		 fileRead(commodityFile, "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap);
+		 fileRead("commodity.lst", "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap, args[0]);
 
 
 
@@ -164,11 +163,11 @@ public class CalculateSales {
 
 	}
 
-	static boolean fileWrite(HashMap<String, Long> hoge, HashMap<String, String > fuga,
+	static boolean fileWrite(HashMap<String, Long> totalMap, HashMap<String, String> codeNameMap,
 			String fileName, String args) throws IOException {
 
 		List<Map.Entry<String,Long>> nameSort =
-				new ArrayList<Map.Entry<String,Long>>(hoge.entrySet());
+				new ArrayList<Map.Entry<String,Long>>(totalMap.entrySet());
 		Collections.sort(nameSort, new Comparator<Map.Entry<String,Long>>() {
 			@Override
 			public int compare(
@@ -183,7 +182,7 @@ public class CalculateSales {
 
 		try {
 			for(Entry<String,Long> s : nameSort) {
-				bw.write(s.getKey() + "," + fuga.get(s.getKey()) + "," + s.getValue() + "\n");
+				bw.write(s.getKey() + "," + codeNameMap.get(s.getKey()) + "," + s.getValue() + "\n");
 			}
 		} catch(IOException e) {
 			return false;
@@ -193,18 +192,18 @@ public class CalculateSales {
 		return true;
 	}
 
-	static boolean fileRead(File piyo, String format, String twoName,
-			HashMap<String, String> foo, HashMap<String, Long> bar) throws IOException {
+	static boolean fileRead(String fileName, String format, String twoName,
+			HashMap<String, String> codeNameMap, HashMap<String, Long> totalMap, String args) throws IOException {
+		File twoFile = new File(args, fileName);
 
-
-		if(!piyo.exists()){
+		if(!twoFile.exists()){
 			System.out.println(twoName + "定義ファイルが存在しません");
 			return false;
 		}
 
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(piyo));
+			br = new BufferedReader(new FileReader(twoFile));
 
 			String str;
 			while((str = br.readLine()) != null) {
@@ -214,9 +213,9 @@ public class CalculateSales {
 					System.out.println(twoName + "定義ファイルのフォーマットが不正です");
 					return false;
 				}
-				foo.put(twoData[0], twoData[1]);
+				codeNameMap.put(twoData[0], twoData[1]);
 				//支店コードと金額０円のマップを作る
-				bar.put(twoData[0], 0L);
+				totalMap.put(twoData[0], 0L);
 			}
 		} catch(IOException e) {
 			System.out.println("予期せぬエラーが発生しました");
