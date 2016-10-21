@@ -16,6 +16,12 @@ import java.util.Map.Entry;
 
 public class CalculateSales {
 	public static void main(String[] args) throws IOException {
+		File dir = new File(args[0]);
+
+		if (!dir.exists()) {
+			 System.out.println("予期せぬエラーが発生しました");
+			 return;
+		}
 
 		if(args.length != 1) {
 			System.out.println("予期せぬエラーが発生しました");
@@ -26,8 +32,10 @@ public class CalculateSales {
 		HashMap<String, String> branchMap = new HashMap<String, String>();
 		HashMap<String, Long> branchTotalMap = new HashMap<String, Long>();
 
+		String branchLstFilePath = args[0] + File.separator + "branch.lst";
+
 		//メソッド分け
-		if (!fileRead("branch.lst", "^\\d{3}$", "支店", branchMap, branchTotalMap, args[0])) {
+		if (!fileRead(branchLstFilePath, "^\\d{3}$", "支店", branchMap, branchTotalMap)) {
 			return;
 		}
 
@@ -35,8 +43,10 @@ public class CalculateSales {
 		HashMap<String, String> commodityMap = new HashMap<String, String>();
 		HashMap<String, Long> commodityTotalMap = new HashMap<String, Long>();
 
+		String commodityLstFilePath = args[0] + File.separator + "commodity.lst";
+
 		//メソッド分け
-		if (!fileRead("commodity.lst", "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap, args[0])) {
+		if (!fileRead(commodityLstFilePath, "^[0-9a-zA-Z]{8}", "商品", commodityMap, commodityTotalMap)) {
 			return;
 		}
 
@@ -73,7 +83,6 @@ public class CalculateSales {
 		BufferedReader br = null;
 		for(int i = 0; i < fileName.size(); i++) {
 			try {
-				//ファイル型に変換
 				File file = new File(args[0], fileName.get(i));
 				br = new BufferedReader(new FileReader(file));
 
@@ -87,12 +96,12 @@ public class CalculateSales {
 					System.out.println(fileName.get(i) + "のフォーマットが不正です");
 					return;
 				}
-
 				//計算処理 支店
 				if(!branchTotalMap.containsKey(fileData.get(0))) {	//支店コードの存在確認
 					System.out.println(fileName.get(i) + "の支店コードが不正です");
 					return;
 				}
+
 				long branchTotalValue = branchTotalMap.get(fileData.get(0)) + Long.parseLong(fileData.get(2));
 				if(branchTotalValue > 9999999999L){
 					System.out.println("合計金額が10桁を超えました");
@@ -112,6 +121,9 @@ public class CalculateSales {
 				}
 				commodityTotalMap.put(fileData.get(1), commodityTotalValue);
 			} catch(IOException e) {
+				System.out.println("予期せぬエラーが発生しました");
+				return;
+			} catch(NumberFormatException e) {
 				System.out.println("予期せぬエラーが発生しました");
 				return;
 			} finally {
@@ -134,12 +146,12 @@ public class CalculateSales {
 		}
 	}
 
-	static boolean fileWrite(HashMap<String, Long> totalMap, HashMap<String, String> codeNameMap,
+	static boolean fileWrite(HashMap<String, Long> totalMap, HashMap<String, String> NameMap,
 			String fileName, String dir) throws IOException {
 
-		List<Map.Entry<String,Long>> nameSort =
+		List<Map.Entry<String,Long>> moneySort =
 				new ArrayList<Map.Entry<String,Long>>(totalMap.entrySet());
-		Collections.sort(nameSort, new Comparator<Map.Entry<String,Long>>() {
+		Collections.sort(moneySort, new Comparator<Map.Entry<String,Long>>() {
 			@Override
 			public int compare(
 					Entry<String,Long> entry1, Entry<String,Long> entry2) {
@@ -152,8 +164,8 @@ public class CalculateSales {
 			File files = new File(dir, fileName);
 			bw = new BufferedWriter(new FileWriter(files));
 			String newLine = System.getProperty("line.separator");
-			for(Entry<String,Long> s : nameSort) {
-				bw.write(s.getKey() + "," + codeNameMap.get(s.getKey()) + "," + s.getValue() + newLine);
+			for(Entry<String,Long> s : moneySort) {
+				bw.write(s.getKey() + "," + NameMap.get(s.getKey()) + "," + s.getValue() + newLine);
 			}
 		} catch(IOException e) {
 			return false;
@@ -164,8 +176,8 @@ public class CalculateSales {
 	}
 
 	static boolean fileRead(String fileName, String format, String definition,
-			HashMap<String, String> codeNameMap, HashMap<String, Long> totalMap, String dir) throws IOException {
-		File file = new File(dir, fileName);
+			HashMap<String, String> NameMap, HashMap<String, Long> totalMap) throws IOException {
+		File file = new File(fileName);
 
 		if(!file.exists()){
 			System.out.println(definition + "定義ファイルが存在しません");
@@ -183,7 +195,7 @@ public class CalculateSales {
 					System.out.println(definition + "定義ファイルのフォーマットが不正です");
 					return false;
 				}
-				codeNameMap.put(data[0], data[1]);
+				NameMap.put(data[0], data[1]);
 				//支店コードと金額０円のマップを作る
 				totalMap.put(data[0], 0L);
 			}
