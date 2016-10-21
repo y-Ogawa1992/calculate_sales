@@ -70,7 +70,6 @@ public class CalculateSales {
 		}
 
 		//処理内容３－２ 集計処理②-支店合計
-
 		BufferedReader br = null;
 		for(int i = 0; i < fileName.size(); i++) {
 			try {
@@ -84,7 +83,7 @@ public class CalculateSales {
 					fileData.add(str);
 				}
 				//3行以外ならエラーメッセージ
-				if(!(fileData.size() == 3)) {
+				if(fileData.size() != 3) {
 					System.out.println(fileName.get(i) + "のフォーマットが不正です");
 					return;
 				}
@@ -100,7 +99,6 @@ public class CalculateSales {
 					return;
 				}
 				branchTotalMap.put(fileData.get(0), branchTotalValue);
-
 
 				//計算処理 商品
 				if(!commodityTotalMap.containsKey(fileData.get(1))) {	//商品コードの存在確認
@@ -166,17 +164,16 @@ public class CalculateSales {
 
 	static boolean fileRead(String fileName, String format, String definition,
 			HashMap<String, String> codeNameMap, HashMap<String, Long> totalMap, String dir) throws IOException {
-		File files = new File(dir, fileName);
+		File file = new File(dir, fileName);
 
-		if(!files.exists()){
+		if(!file.exists()){
 			System.out.println(definition + "定義ファイルが存在しません");
 			return false;
 		}
 
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(files));
-
+			br = new BufferedReader(new FileReader(file));
 			String str;
 			while((str = br.readLine()) != null) {
 				String[] data = str.split(",", 0);
@@ -197,5 +194,4 @@ public class CalculateSales {
 		}
 		return true;
 	}
-
 }
