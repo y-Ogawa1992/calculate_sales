@@ -151,8 +151,9 @@ public class CalculateSales {
 		try {
 			File files = new File(dir, fileName);
 			bw = new BufferedWriter(new FileWriter(files));
+			String newLine = System.getProperty("line.separator");
 			for(Entry<String,Long> s : nameSort) {
-				bw.write(s.getKey() + "," + codeNameMap.get(s.getKey()) + "," + s.getValue() + "\n");
+				bw.write(s.getKey() + "," + codeNameMap.get(s.getKey()) + "," + s.getValue() + newLine);
 			}
 		} catch(IOException e) {
 			return false;
