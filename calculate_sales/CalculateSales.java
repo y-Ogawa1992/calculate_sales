@@ -20,10 +20,10 @@ import java.util.Map.Entry;
 public class CalculateSales {
 	public static void main(String[] args) throws IOException {
 
-//		if(args.length != 1) {
-//			System.out.println("予期せぬエラーが発生しました");
-//			return;
-//		}
+		if(args.length != 1) {
+			System.out.println("予期せぬエラーが発生しました");
+			return;
+		}
 
 		//処理内容１ branch.lstの処理
 
