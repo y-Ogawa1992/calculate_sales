@@ -59,13 +59,13 @@ public class CalculateSales {
 		//拡張子手前で取出し
 		//for文でfileNameを全てチェックし、最小1最大3で当てはまらなければエラー
 		int max = Integer.parseInt(fileName.get(0).split("\\.")[0]);
-		int min = Integer.parseInt(fileName.get(1).split("\\.")[0]);
+		int min = Integer.parseInt(fileName.get(0).split("\\.")[0]);
 		for(int i = 0; i < fileName.size(); i++) {
 			int temp = Integer.parseInt(fileName.get(i).split("\\.")[0]);
 			if(max < temp) max = temp;
 			if(min > temp) min = temp;
 		}
-		if(!(min == 1 && fileName.size() == max)) {	//ArrayList内の要素数 = 最大値の式が成り立てば
+		if(min != 1 || fileName.size() != max) {	//ArrayList内の要素数 = 最大値の式が成り立てば
 			System.out.println("売上ファイル名が連番になっていません");
 			return;
 		}
@@ -127,7 +127,7 @@ public class CalculateSales {
 
 		//支店別集計ファイル
 
-		//メソッド分け　エラララー
+		//メソッド分け
 		if (!fileWrite(branchTotalMap, branchMap, "branch.out", args[0])) {
 			System.out.println("予期せぬエラーが発生しました");
 			return;
@@ -137,7 +137,7 @@ public class CalculateSales {
 
 		//ファイル書き込みメソッド分け
 		if (!fileWrite(commodityTotalMap, commodityMap, "commodity.out", args[0])) {
-			System.out.println("予期せぬエラーが発生しました");	//エラー出てるよ
+			System.out.println("予期せぬエラーが発生しました");
 			return;
 		}
 	}
@@ -155,10 +155,9 @@ public class CalculateSales {
 			}
 		});
 
-		File file = new File(args, fileName);
 		BufferedWriter bw = null;
-
 		try {
+			File file = new File(args, fileName);
 			bw = new BufferedWriter(new FileWriter(file));
 			for(Entry<String,Long> s : nameSort) {
 				bw.write(s.getKey() + "," + codeNameMap.get(s.getKey()) + "," + s.getValue() + "\n");
@@ -166,13 +165,8 @@ public class CalculateSales {
 		} catch(IOException e) {
 			return false;
 		} finally {
-			try {
-				if(bw != null) { bw.close(); }
-			} catch (IOException e) {
-				System.out.println("予期せぬエラーが発生しました");
-				return false;
+			if(bw != null) bw.close();
 			}
-		}
 		return true;
 	}
 
@@ -205,12 +199,7 @@ public class CalculateSales {
 			System.out.println("予期せぬエラーが発生しました");
 			return false;
 		} finally {
-			try {
-				if(br != null) { br.close(); }
-			} catch (IOException e) {
-				System.out.println("予期せぬエラーが発生しました");
-				return false;
-			}
+			if(br != null) { br.close(); }
 		}
 		return true;
 	}
